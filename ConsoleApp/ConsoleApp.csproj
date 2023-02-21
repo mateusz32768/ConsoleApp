@@ -44,6 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataReader.cs" />
+    <Compile Include="DataReader2.cs" />
+    <Compile Include="Model\CSVRow.cs" />
+    <Compile Include="Model\Database.cs" />
+    <Compile Include="Model\DatabaseObjectBase.cs" />
+    <Compile Include="Model\DataColumn.cs" />
+    <Compile Include="Model\DataSet.cs" />
+    <Compile Include="Model\DataTable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

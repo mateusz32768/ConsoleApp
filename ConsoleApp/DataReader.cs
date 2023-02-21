@@ -9,13 +9,13 @@
 
     public class DataReader
     {
-        IEnumerable<ImportedObject> ImportedObjects;
+        IEnumerable<ImportedObject> ImportedObjects; //zmienna użyta tylko w funkcji ImportAdPrintData więc mogła być zadeklarowana wewnątrz metody
 
-        public void ImportAndPrintData(string fileToImport, bool printData = true)
+        public void ImportAndPrintData(string fileToImport, bool printData = true) // nie zwraca danych. Czy nie lepiej byłoby nie drukować w funkcji tylko zwracać dane przygotowane do prezentacji?
         {
-            ImportedObjects = new List<ImportedObject>() { new ImportedObject() };
+            ImportedObjects = new List<ImportedObject>() { new ImportedObject() }; // niepotrzebna inicjalizacja pustym obiektem?
 
-            var streamReader = new StreamReader(fileToImport);
+            var streamReader = new StreamReader(fileToImport); // brak zwalniania zasobów
 
             var importedLines = new List<string>();
             while (!streamReader.EndOfStream)
@@ -29,20 +29,20 @@
                 var importedLine = importedLines[i];
                 var values = importedLine.Split(';');
                 var importedObject = new ImportedObject();
-                importedObject.Type = values[0];
+                importedObject.Type = values[0];// bez sprawdzenia długości tablicy w przypadku pustego rekordu wyrzuci błąd
                 importedObject.Name = values[1];
                 importedObject.Schema = values[2];
                 importedObject.ParentName = values[3];
                 importedObject.ParentType = values[4];
                 importedObject.DataType = values[5];
                 importedObject.IsNullable = values[6];
-                ((List<ImportedObject>)ImportedObjects).Add(importedObject);
+                ((List<ImportedObject>)ImportedObjects).Add(importedObject); // lepiej byłoby zadeklarowac zmienną jako List<ImportedObject> zamiast rzutować
             }
 
             // clear and correct imported data
             foreach (var importedObject in ImportedObjects)
             {
-                importedObject.Type = importedObject.Type.Trim().Replace(" ", "").Replace(Environment.NewLine, "").ToUpper();
+                importedObject.Type = importedObject.Type.Trim().Replace(" ", "").Replace(Environment.NewLine, "").ToUpper();// można by dodać funkcję normalizującą żeby nie duplikować kodu
                 importedObject.Name = importedObject.Name.Trim().Replace(" ", "").Replace(Environment.NewLine, "");
                 importedObject.Schema = importedObject.Schema.Trim().Replace(" ", "").Replace(Environment.NewLine, "");
                 importedObject.ParentName = importedObject.ParentName.Trim().Replace(" ", "").Replace(Environment.NewLine, "");
@@ -57,14 +57,14 @@
                 {
                     if (impObj.ParentType == importedObject.Type)
                     {
-                        if (impObj.ParentName == importedObject.Name)
+                        if (impObj.ParentName == importedObject.Name)// zamiast zagnieżdżać można to wstawić w jednego if-a
                         {
                             importedObject.NumberOfChildren = 1 + importedObject.NumberOfChildren;
                         }
                     }
                 }
             }
-
+            // wielokrotne zagnieżdżanie zmniejsza czytelność kodu. Przeszukiwanie całej tablicy w celu wyszukania elementów podrzędnych jest mało wydajne.
             foreach (var database in ImportedObjects)
             {
                 if (database.Type == "DATABASE")
@@ -103,7 +103,7 @@
 
     class ImportedObject : ImportedObjectBaseClass
     {
-        public string Name
+        public string Name//zmienna jest zbędna. Została odziedziczona z klasy bazowej
         {
             get;
             set;
